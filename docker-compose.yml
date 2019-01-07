@@ -1,0 +1,61 @@
+version: '2'
+
+services:
+
+  api:
+    container_name: wisnote-api
+    restart: always
+    build:
+      context: ./backend/app
+      dockerfile: Dockerfile-local
+    working_dir: /app
+    volumes:
+      - ./backend/app:/app
+    expose:
+      - "5042"
+    command: python3 app.py
+    depends_on:
+      - nginx
+      - mysql
+
+  app:
+    container_name: wisnote-app
+    restart: always
+    build: ./frontend/app
+    working_dir: /app
+    volumes:
+      - ./frontend/app:/app
+    expose:
+      - "8080"
+    depends_on:
+      - nginx
+
+  nginx:
+    container_name: wisnote-nginx
+    image: nginx:1.13
+    restart: always
+    ports:
+      - 80:80
+      - 443:443
+    volumes:
+      - ./nginx/conf.d:/etc/nginx/conf.d
+
+  mysql:
+    container_name: wisnote-mysql
+    image: mysql:5.7
+    environment:
+      MYSQL_DATABASE: testdb
+      MYSQL_ROOT_PASSWORD: password
+    ports:
+      - 3306:3306
+    volumes:
+      - mysql-data:/var/lib/mysql:cached
+      - ./mysql/conf:/etc/mysql/conf.d:cached
+    command: --innodb-use-native-aio=0
+
+volumes:
+  maven-dependencies:
+    driver: local
+  mysql-data:
+    driver: local
+  

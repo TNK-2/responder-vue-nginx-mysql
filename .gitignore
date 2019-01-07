@@ -1,0 +1,15 @@
+.idea
+target
+*.iml
+out
+*.DS_Store
+app/idea
+app/target
+app/*.iml
+app/out
+app/.DS_Store
+app/.settings
+app/.classpath
+app/.project
+.project
+.vscode
